@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>NeuroScan AI — Brain Tumor Detection</title>
+<title>Patient History — NeuroScan AI</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <style>
   body { background:#0a0a0a; color:#f0f0f0; font-family:'Segoe UI',sans-serif; }
@@ -12,12 +12,12 @@
   .nav-link-item { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:8px; color:#888; text-decoration:none; font-size:14px; transition:all 0.2s; }
   .nav-link-item:hover { background:#1a1a1a; color:#f0f0f0; }
   .nav-link-item.active { background:#ea580c; color:white; }
-  .stat-card { background:#111; border:1px solid #2a2a2a; border-radius:12px; padding:1.25rem; }
+  .table-card { background:#111; border:1px solid #2a2a2a; border-radius:16px; padding:1.75rem; }
   .badge-normal  { background:#052e16; color:#86efac; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
   .badge-warning { background:#431407; color:#fdba74; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
   .badge-danger  { background:#450a0a; color:#fca5a5; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-  .scan-row:hover td { background:#111 !important; }
-  .btn-orange { background:#ea580c; border:none; color:white; padding:10px 24px; border-radius:8px; font-weight:600; text-decoration:none; display:inline-block; transition:background 0.2s; }
+  .scan-row:hover td { background:#0a0a0a !important; }
+  .btn-orange { background:#ea580c; border:none; color:white; padding:10px 20px; border-radius:8px; font-weight:600; font-size:14px; text-decoration:none; transition:background 0.2s; }
   .btn-orange:hover { background:#c2410c; color:white; }
 </style>
 </head>
@@ -31,13 +31,13 @@
     <small style="color:#555;margin-left:44px;">Brain Tumor Detection</small>
   </div>
   <nav class="d-flex flex-column gap-1">
-    <a href="/" class="nav-link-item active">
+    <a href="/" class="nav-link-item">
       <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard
     </a>
     <a href="/uimg" class="nav-link-item">
       <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>New Scan
     </a>
-    <a href="/history" class="nav-link-item">
+    <a href="/history" class="nav-link-item active">
       <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Patient History
     </a>
   </nav>
@@ -47,68 +47,41 @@
 </div>
 
 <div class="main-content">
-  <div class="mb-4">
-    <h1 style="font-size:1.75rem;font-weight:700;color:white;">Dashboard</h1>
-    <p style="color:#888;">Welcome to NeuroScan AI — Brain Tumor Detection System</p>
-  </div>
-  <div class="row g-3 mb-4">
-    <div class="col-md-3"><div class="stat-card">
-      <p style="color:#888;font-size:13px;margin-bottom:4px;">Total Scans</p>
-      <p style="font-size:1.75rem;font-weight:700;color:white;margin:0;">{{ total }}</p>
-    </div></div>
-    <div class="col-md-3"><div class="stat-card">
-      <p style="color:#888;font-size:13px;margin-bottom:4px;">Tumors Detected</p>
-      <p style="font-size:1.75rem;font-weight:700;color:#f87171;margin:0;">{{ tumor_count }}</p>
-    </div></div>
-    <div class="col-md-3"><div class="stat-card">
-      <p style="color:#888;font-size:13px;margin-bottom:4px;">Model</p>
-      <p style="font-size:1.75rem;font-weight:700;color:#f97316;margin:0;">ResNet50</p>
-    </div></div>
-    <div class="col-md-3"><div class="stat-card">
-      <p style="color:#888;font-size:13px;margin-bottom:4px;">Classes</p>
-      <p style="font-size:1.75rem;font-weight:700;color:#fb923c;margin:0;">4 Types</p>
-    </div></div>
-  </div>
-  <div class="row g-3 mb-4">
-    <div class="col-md-8"><div class="stat-card">
-      <h5 style="color:white;font-weight:600;margin-bottom:12px;">About Brain Tumors</h5>
-      <p style="color:#888;font-size:14px;line-height:1.7;">A brain tumor is a mass or growth of abnormal cells in the brain. This AI system detects four categories:
-        <span style="color:#86efac;">No Tumor</span>, <span style="color:#fdba74;">Meningioma</span> (slow-growing, usually benign),
-        <span style="color:#fca5a5;">Glioma</span> (requires urgent attention), and <span style="color:#fdba74;">Pituitary</span> (usually manageable).</p>
-      <p style="color:#555;font-size:12px;margin-bottom:0;">Common symptoms: headaches, seizures, vision changes, personality changes, weakness.</p>
-    </div></div>
-    <div class="col-md-4"><div class="stat-card d-flex flex-column justify-content-between h-100">
-      <div>
-        <h5 style="color:white;font-weight:600;margin-bottom:8px;">Run a New Scan</h5>
-        <p style="color:#888;font-size:14px;">Upload an MRI image for instant AI diagnosis with confidence scores.</p>
-      </div>
-      <a href="/uimg" class="btn-orange text-center mt-3">Start Scan →</a>
-    </div></div>
-  </div>
-  {% if recent %}
-  <div class="stat-card">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 style="color:white;font-weight:600;margin:0;">Recent Scans</h5>
-      <a href="/history" style="color:#f97316;font-size:13px;text-decoration:none;">View all →</a>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 style="font-size:1.75rem;font-weight:700;color:white;">Patient History</h1>
+      <p style="color:#888;">All past MRI scans and diagnoses</p>
     </div>
+    <a href="/uimg" class="btn-orange">+ New Scan</a>
+  </div>
+  <div class="table-card">
+    {% if scans %}
     <table class="table table-borderless mb-0" style="color:#f0f0f0;">
       <thead style="color:#555;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;">
-        <tr><th>Patient</th><th>Age</th><th>Date</th><th>Result</th><th>Confidence</th></tr>
+        <tr><th>ID</th><th>Patient Name</th><th>Age</th><th>Scan Date</th><th>Diagnosis</th><th>Confidence</th></tr>
       </thead>
       <tbody>
-        {% for scan in recent %}
+        {% for scan in scans %}
         <tr class="scan-row" style="border-top:1px solid #2a2a2a;font-size:14px;">
-          <td style="padding:10px 8px;">{{ scan[1] }}</td>
-          <td>{{ scan[2] or '—' }}</td>
+          <td style="color:#555;padding:12px 8px;">#{{ scan[0] }}</td>
+          <td style="font-weight:500;">{{ scan[1] }}</td>
+          <td style="color:#888;">{{ scan[2] or '—' }}</td>
           <td style="color:#888;">{{ scan[3] }}</td>
           <td><span class="{% if scan[4]=='No Tumor' %}badge-normal{% elif scan[4]=='Glioma' %}badge-danger{% else %}badge-warning{% endif %}">{{ scan[4] }}</span></td>
-          <td style="color:#f97316;">{{ "%.1f"|format(scan[5]) }}%</td>
+          <td style="color:#f97316;font-weight:600;">{{ "%.1f"|format(scan[5]) }}%</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+    {% else %}
+    <div style="text-align:center;padding:4rem 2rem;color:#444;">
+      <svg width="48" height="48" fill="none" stroke="#2a2a2a" viewBox="0 0 24 24" style="margin:0 auto 12px;display:block;">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      <p style="font-size:15px;">No scans yet. <a href="/uimg" style="color:#f97316;">Run your first scan →</a></p>
+    </div>
+    {% endif %}
   </div>
-  {% endif %}
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

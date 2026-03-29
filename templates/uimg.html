@@ -1,23 +1,110 @@
-<!doctype html> 
-<html> 
-<title>Brain tumor DETECTION</title>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>New Scan — NeuroScan AI</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<style>
+  body { background:#0a0a0a; color:#f0f0f0; font-family:'Segoe UI',sans-serif; }
+  .sidebar { width:240px; min-height:100vh; background:#111; border-right:1px solid #2a2a2a; position:fixed; top:0; left:0; }
+  .main-content { margin-left:240px; padding:2rem; }
+  .nav-link-item { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:8px; color:#888; text-decoration:none; font-size:14px; transition:all 0.2s; }
+  .nav-link-item:hover { background:#1a1a1a; color:#f0f0f0; }
+  .nav-link-item.active { background:#ea580c; color:white; }
+  .upload-card { background:#111; border:1px solid #2a2a2a; border-radius:16px; padding:2rem; max-width:600px; }
+  .drop-zone { border:2px dashed #2a2a2a; border-radius:12px; padding:3rem 2rem; text-align:center; cursor:pointer; transition:all 0.2s; }
+  .drop-zone:hover, .drop-zone.dragover { border-color:#ea580c; background:#1a0f0a; }
+  .form-control-dark { background:#0a0a0a; border:1px solid #2a2a2a; color:#f0f0f0; border-radius:8px; padding:10px 14px; width:100%; font-size:14px; }
+  .form-control-dark:focus { outline:none; border-color:#ea580c; }
+  .form-control-dark::placeholder { color:#444; }
+  .btn-scan { background:#ea580c; border:none; color:white; padding:12px 32px; border-radius:8px; font-weight:600; font-size:15px; width:100%; cursor:pointer; transition:background 0.2s; }
+  .btn-scan:hover { background:#c2410c; }
+  #preview { display:none; max-width:200px; max-height:200px; border-radius:8px; margin:12px auto 0; border:2px solid #2a2a2a; }
+</style>
 </head>
- <body> 
-<h1 class="h1 fw-bold text-center text-uppercase shadow py-2 my-1 px-1 mx-1 bg-primary text-white">Brain Tumor DETECTION</h1>
-<div class="container my-1 p-2 d-flex justify-content-center">
-<div class="w-50 mt-3 p-3 mb-2 border rounded shadow">
-<form method="post" action="{{ url_for('uimg') }}" enctype="multipart/form-data" class="p-2">
-	<div class="mb-3">
-		<label for="formFile" class="form-label">Select File</label>
-		<input class="form-control" type="file" id="formFile" required name="file">
-	  </div>
-	  <button type="submit" class="btn btn-primary btn-group-lg" value="predict">Predict</button>
-</form>
+<body>
+<div class="sidebar d-flex flex-column p-3">
+  <div class="mb-4 mt-2 px-2">
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <div style="width:36px;height:36px;background:#ea580c;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:white;">N</div>
+      <span style="font-weight:600;font-size:16px;color:white;">NeuroScan AI</span>
+    </div>
+    <small style="color:#555;margin-left:44px;">Brain Tumor Detection</small>
+  </div>
+  <nav class="d-flex flex-column gap-1">
+    <a href="/" class="nav-link-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard
+    </a>
+    <a href="/uimg" class="nav-link-item active">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>New Scan
+    </a>
+    <a href="/history" class="nav-link-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Patient History
+    </a>
+  </nav>
+  <div class="mt-auto pt-3" style="border-top:1px solid #2a2a2a;">
+    <small style="color:#444;display:block;text-align:center;">AI Research Tool · Not for clinical use</small>
+  </div>
 </div>
+
+<div class="main-content">
+  <div class="mb-4">
+    <h1 style="font-size:1.75rem;font-weight:700;color:white;">New Scan</h1>
+    <p style="color:#888;">Upload an MRI image to get an AI-powered tumor diagnosis</p>
+  </div>
+  <div class="upload-card">
+    <form action="/uimg" method="POST" enctype="multipart/form-data" id="scanForm">
+      <div class="row g-3 mb-4">
+        <div class="col-6">
+          <label style="font-size:13px;color:#888;display:block;margin-bottom:6px;">Patient Name</label>
+          <input type="text" name="patient_name" placeholder="e.g. John Doe" class="form-control-dark"/>
+        </div>
+        <div class="col-6">
+          <label style="font-size:13px;color:#888;display:block;margin-bottom:6px;">Patient Age</label>
+          <input type="text" name="patient_age" placeholder="e.g. 35" class="form-control-dark"/>
+        </div>
+      </div>
+      <div class="drop-zone mb-4" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <svg width="40" height="40" fill="none" stroke="#444" viewBox="0 0 24 24" style="margin:0 auto 12px;display:block;">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <p style="color:#888;font-size:14px;margin:0;" id="dropText">Click or drag & drop your MRI scan here</p>
+        <p style="color:#555;font-size:12px;margin:4px 0 0;">PNG, JPG, JPEG, GIF supported</p>
+        <input type="file" id="fileInput" name="file" accept=".png,.jpg,.jpeg,.gif" style="display:none;" required onchange="previewFile(this)"/>
+        <img id="preview" src="" alt="Preview"/>
+      </div>
+      <button type="submit" class="btn-scan" id="submitBtn">Analyse MRI Scan</button>
+    </form>
+  </div>
 </div>
+
+<script>
+function previewFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('preview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    document.getElementById('dropText').textContent = file.name;
+  };
+  reader.readAsDataURL(file);
+}
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) { document.getElementById('fileInput').files = e.dataTransfer.files; previewFile(document.getElementById('fileInput')); }
+});
+document.getElementById('scanForm').addEventListener('submit', () => {
+  document.getElementById('submitBtn').textContent = 'Analysing...';
+  document.getElementById('submitBtn').disabled = true;
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -11,7 +11,6 @@
 
 > A full **end-to-end deep learning web application** that classifies brain tumors in MRI scans into three tumor types using a **fine-tuned ResNet50** via Transfer Learning — achieving **99.3% accuracy** — deployed as a live Flask web app.
 
-[🔙 Back to Main Repository](https://github.com/shsarv/Machine-Learning-Projects)
 
 </div>
 

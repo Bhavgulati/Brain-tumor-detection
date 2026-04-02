@@ -1,3 +1,4 @@
+cat > uimg.html << 'EOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,7 @@
   .nav-link-item { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:8px; color:#888; text-decoration:none; font-size:14px; transition:all 0.2s; }
   .nav-link-item:hover { background:#1a1a1a; color:#f0f0f0; }
   .nav-link-item.active { background:#ea580c; color:white; }
-  .upload-card { background:#111; border:1px solid #2a2a2a; border-radius:16px; padding:2rem; max-width:600px; }
+  .upload-card { background:#111; border:1px solid #2a2a2a; border-radius:16px; padding:2rem; max-width:620px; }
   .drop-zone { border:2px dashed #2a2a2a; border-radius:12px; padding:3rem 2rem; text-align:center; cursor:pointer; transition:all 0.2s; }
   .drop-zone:hover, .drop-zone.dragover { border-color:#ea580c; background:#1a0f0a; }
   .form-control-dark { background:#0a0a0a; border:1px solid #2a2a2a; color:#f0f0f0; border-radius:8px; padding:10px 14px; width:100%; font-size:14px; }
@@ -20,7 +21,10 @@
   .form-control-dark::placeholder { color:#444; }
   .btn-scan { background:#ea580c; border:none; color:white; padding:12px 32px; border-radius:8px; font-weight:600; font-size:15px; width:100%; cursor:pointer; transition:background 0.2s; }
   .btn-scan:hover { background:#c2410c; }
+  .scan-type-btn { background:#0a0a0a; border:1px solid #2a2a2a; color:#888; padding:10px 20px; border-radius:8px; font-size:14px; cursor:pointer; transition:all 0.2s; flex:1; text-align:center; }
+  .scan-type-btn.selected { border-color:#ea580c; color:#ea580c; background:#1a0f0a; }
   #preview { display:none; max-width:200px; max-height:200px; border-radius:8px; margin:12px auto 0; border:2px solid #2a2a2a; }
+  label { font-size:13px; color:#888; display:block; margin-bottom:6px; }
 </style>
 </head>
 <body>
@@ -30,7 +34,7 @@
       <div style="width:36px;height:36px;background:#ea580c;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:white;">N</div>
       <span style="font-weight:600;font-size:16px;color:white;">NeuroScan AI</span>
     </div>
-    <small style="color:#555;margin-left:44px;">Brain Tumor Detection</small>
+    <small style="color:#555;margin-left:44px;">Medical AI Platform</small>
   </div>
   <nav class="d-flex flex-column gap-1">
     <a href="/" class="nav-link-item">
@@ -42,6 +46,19 @@
     <a href="/history" class="nav-link-item">
       <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Patient History
     </a>
+    <a href="/stats" class="nav-link-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Statistics
+    </a>
+    <a href="/compare" class="nav-link-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>Compare Scans
+    </a>
+    <div style="border-top:1px solid #2a2a2a;margin:8px 0;"></div>
+    <a href="/patient/login" class="nav-link-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>Patient Login
+    </a>
+    <a href="/doctor/login" class="nav-link-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Doctor Login
+    </a>
   </nav>
   <div class="mt-auto pt-3" style="border-top:1px solid #2a2a2a;">
     <small style="color:#444;display:block;text-align:center;">AI Research Tool · Not for clinical use</small>
@@ -51,35 +68,63 @@
 <div class="main-content">
   <div class="mb-4">
     <h1 style="font-size:1.75rem;font-weight:700;color:white;">New Scan</h1>
-    <p style="color:#888;">Upload an MRI image to get an AI-powered tumor diagnosis</p>
+    <p style="color:#888;">Upload an MRI or dermoscopy image for AI diagnosis</p>
   </div>
   <div class="upload-card">
     <form action="/uimg" method="POST" enctype="multipart/form-data" id="scanForm">
-      <div class="row g-3 mb-4">
+
+      <!-- Scan type selector -->
+      <div class="mb-4">
+        <label>Scan Type</label>
+        <div class="d-flex gap-2">
+          <div class="scan-type-btn selected" id="btn-brain" onclick="selectType('brain')">
+            🧠 Brain MRI
+          </div>
+          <div class="scan-type-btn" id="btn-skin" onclick="selectType('skin')">
+            🔬 Skin Dermoscopy
+          </div>
+        </div>
+        <input type="hidden" name="scan_type" id="scan_type" value="brain"/>
+      </div>
+
+      <!-- Patient info -->
+      <div class="row g-3 mb-3">
         <div class="col-6">
-          <label style="font-size:13px;color:#888;display:block;margin-bottom:6px;">Patient Name</label>
+          <label>Patient Name</label>
           <input type="text" name="patient_name" placeholder="e.g. John Doe" class="form-control-dark"/>
         </div>
         <div class="col-6">
-          <label style="font-size:13px;color:#888;display:block;margin-bottom:6px;">Patient Age</label>
+          <label>Patient Age</label>
           <input type="text" name="patient_age" placeholder="e.g. 35" class="form-control-dark"/>
         </div>
       </div>
+      <div class="mb-4">
+        <label>Patient Email <span style="color:#555;">(optional — links scan to patient account)</span></label>
+        <input type="email" name="patient_email" placeholder="patient@example.com" class="form-control-dark"/>
+      </div>
+
+      <!-- File upload -->
       <div class="drop-zone mb-4" id="dropZone" onclick="document.getElementById('fileInput').click()">
         <svg width="40" height="40" fill="none" stroke="#444" viewBox="0 0 24 24" style="margin:0 auto 12px;display:block;">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
-        <p style="color:#888;font-size:14px;margin:0;" id="dropText">Click or drag & drop your MRI scan here</p>
+        <p style="color:#888;font-size:14px;margin:0;" id="dropText">Click or drag & drop your scan here</p>
         <p style="color:#555;font-size:12px;margin:4px 0 0;">PNG, JPG, JPEG, GIF supported</p>
         <input type="file" id="fileInput" name="file" accept=".png,.jpg,.jpeg,.gif" style="display:none;" required onchange="previewFile(this)"/>
         <img id="preview" src="" alt="Preview"/>
       </div>
-      <button type="submit" class="btn-scan" id="submitBtn">Analyse MRI Scan</button>
+
+      <button type="submit" class="btn-scan" id="submitBtn">Analyse Scan</button>
     </form>
   </div>
 </div>
 
 <script>
+function selectType(type) {
+  document.getElementById('scan_type').value = type;
+  document.getElementById('btn-brain').classList.toggle('selected', type === 'brain');
+  document.getElementById('btn-skin').classList.toggle('selected', type === 'skin');
+}
 function previewFile(input) {
   const file = input.files[0];
   if (!file) return;
@@ -108,3 +153,4 @@ document.getElementById('scanForm').addEventListener('submit', () => {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+EOF

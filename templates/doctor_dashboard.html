@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Doctor Dashboard — NeuroScan AI</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<style>
+  body { background:#0a0a0a; color:#f0f0f0; font-family:'Segoe UI',sans-serif; }
+  .sidebar { width:240px; min-height:100vh; background:#111; border-right:1px solid #2a2a2a; position:fixed; top:0; left:0; }
+  .main-content { margin-left:240px; padding:2rem; }
+  .nav-link-item { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:8px; color:#888; text-decoration:none; font-size:14px; transition:all 0.2s; }
+  .nav-link-item:hover { background:#1a1a1a; color:#f0f0f0; }
+  .nav-link-item.active { background:#1d4ed8; color:white; }
+  .stat-card { background:#111; border:1px solid #2a2a2a; border-radius:12px; padding:1.25rem; }
+  .table-card { background:#111; border:1px solid #2a2a2a; border-radius:16px; padding:1.75rem; }
+  .badge-normal  { background:#052e16; color:#86efac; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge-warning { background:#431407; color:#fdba74; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge-danger  { background:#450a0a; color:#fca5a5; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+  .scan-row:hover td { background:#0a0a0a !important; }
+  .btn-blue { background:#1d4ed8; border:none; color:white; padding:8px 16px; border-radius:8px; font-weight:600; font-size:13px; text-decoration:none; transition:background 0.2s; display:inline-block; }
+  .btn-blue:hover { background:#1e40af; color:white; }
+  .doctor-badge-top { background:#0f172a; border:1px solid #1e3a8a; color:#93c5fd; border-radius:8px; padding:8px 16px; font-size:13px; display:inline-flex; align-items:center; gap:8px; }
+</style>
+</head>
+<body>
+<div class="sidebar d-flex flex-column p-3">
+  <div class="mb-4 mt-2 px-2">
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <div style="width:36px;height:36px;background:#1d4ed8;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:white;">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      </div>
+      <span style="font-weight:600;font-size:16px;color:white;">NeuroScan AI</span>
+    </div>
+    <small style="color:#555;margin-left:44px;">Doctor Panel</small>
+  </div>
+  <nav class="d-flex flex-column gap-1">
+    <a href="/" class="nav-link-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Home
+    </a>
+    <a href="/doctor/dashboard" class="nav-link-item active">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Doctor Dashboard
+    </a>
+    <a href="/history" class="nav-link-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>All Scans
+    </a>
+    <a href="/stats" class="nav-link-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Statistics
+    </a>
+    <div style="border-top:1px solid #2a2a2a;margin:8px 0;"></div>
+    <a href="/doctor/logout" class="nav-link-item" style="color:#f87171;">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>Logout
+    </a>
+  </nav>
+  <div class="mt-auto pt-3" style="border-top:1px solid #2a2a2a;">
+    <small style="color:#444;display:block;text-align:center;">AI Research Tool · Not for clinical use</small>
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <div class="d-flex align-items-center gap-3 mb-1">
+        <h1 style="font-size:1.75rem;font-weight:700;color:white;margin:0;">Doctor Dashboard</h1>
+        <span class="doctor-badge-top">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          Verified Doctor
+        </span>
+      </div>
+      <p style="color:#888;">Full access to all patient scans and annotations</p>
+    </div>
+    <a href="/uimg" style="background:#ea580c;border:none;color:white;padding:10px 20px;border-radius:8px;font-weight:600;font-size:14px;text-decoration:none;">+ New Scan</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="stat-card">
+      <p style="color:#888;font-size:13px;margin-bottom:4px;">Total Scans</p>
+      <p style="font-size:1.75rem;font-weight:700;color:white;margin:0;">{{ total }}</p>
+    </div></div>
+    <div class="col-md-3"><div class="stat-card">
+      <p style="color:#888;font-size:13px;margin-bottom:4px;">Tumors Detected</p>
+      <p style="font-size:1.75rem;font-weight:700;color:#f87171;margin:0;">{{ tumor_count }}</p>
+    </div></div>
+    <div class="col-md-3"><div class="stat-card">
+      <p style="color:#888;font-size:13px;margin-bottom:4px;">Normal Cases</p>
+      <p style="font-size:1.75rem;font-weight:700;color:#86efac;margin:0;">{{ total - tumor_count }}</p>
+    </div></div>
+    <div class="col-md-3"><div class="stat-card">
+      <p style="color:#888;font-size:13px;margin-bottom:4px;">Detection Rate</p>
+      <p style="font-size:1.75rem;font-weight:700;color:#f97316;margin:0;">
+        {{ "%.0f"|format((tumor_count / total * 100) if total > 0 else 0) }}%
+      </p>
+    </div></div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <!-- Result distribution chart -->
+    <div class="col-md-5">
+      <div class="stat-card h-100">
+        <p style="color:#888;font-size:13px;margin-bottom:16px;">Result Distribution</p>
+        <div style="position:relative;height:220px;">
+          <canvas id="distChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <!-- Recent scans needing attention -->
+    <div class="col-md-7">
+      <div class="stat-card h-100">
+        <p style="color:#888;font-size:13px;margin-bottom:12px;">Critical Cases — Glioma / Malignant</p>
+        {% set critical = scans|selectattr(6, 'in', ['Glioma','Malignant'])|list %}
+        {% if critical %}
+        {% for scan in critical[:5] %}
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #2a2a2a;">
+          <div>
+            <span style="font-size:14px;font-weight:500;">{{ scan[1] }}</span>
+            <span style="color:#555;font-size:12px;margin-left:8px;">{{ scan[4] }}</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge-danger">{{ scan[6] }}</span>
+            <a href="/scan/{{ scan[0] }}" class="btn-blue">Review</a>
+          </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p style="color:#555;font-size:14px;margin-top:1rem;">No critical cases found.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- All recent scans -->
+  <div class="table-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 style="color:white;font-weight:600;margin:0;">Recent Scans</h5>
+      <a href="/history" style="color:#93c5fd;font-size:13px;text-decoration:none;">View all →</a>
+    </div>
+    <table class="table table-borderless mb-0" style="color:#f0f0f0;">
+      <thead style="color:#555;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;">
+        <tr><th>ID</th><th>Patient</th><th>Type</th><th>Date</th><th>Result</th><th>Confidence</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        {% for scan in scans %}
+        <tr class="scan-row" style="border-top:1px solid #2a2a2a;font-size:14px;">
+          <td style="color:#555;padding:12px 8px;">#{{ scan[0] }}</td>
+          <td style="font-weight:500;">{{ scan[1] }}</td>
+          <td>
+            {% if scan[5] == 'brain' %}
+            <span style="background:#1a1a2e;color:#a5b4fc;padding:3px 10px;border-radius:20px;font-size:12px;">Brain</span>
+            {% else %}
+            <span style="background:#1a2e1a;color:#86efac;padding:3px 10px;border-radius:20px;font-size:12px;">Skin</span>
+            {% endif %}
+          </td>
+          <td style="color:#888;">{{ scan[4] }}</td>
+          <td><span class="{% if scan[6] in ['No Tumor','Benign'] %}badge-normal{% elif scan[6] in ['Glioma','Malignant'] %}badge-danger{% else %}badge-warning{% endif %}">{{ scan[6] }}</span></td>
+          <td style="color:#f97316;font-weight:600;">{{ "%.1f"|format(scan[7]) }}%</td>
+          <td><a href="/scan/{{ scan[0] }}" class="btn-blue">Add Note</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const distData = {{ result_dist | safe }};
+const labels = Object.keys(distData);
+const values = Object.values(distData);
+const colors = ['#fca5a5','#fdba74','#86efac','#a5b4fc','#f97316','#34d399'];
+new Chart(document.getElementById('distChart'), {
+  type: 'doughnut',
+  data: {
+    labels: labels,
+    datasets: [{ data: values, backgroundColor: colors.slice(0,labels.length), borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position:'bottom', labels:{ color:'#888', font:{size:12}, padding:12 } }
+    },
+    cutout: '60%'
+  }
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

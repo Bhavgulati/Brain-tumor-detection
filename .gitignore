@@ -1,1 +1,6 @@
 models/*.pt
+models/*.pt
+Skin_Training/
+Skin_Testing/
+*.db
+static/photos/
